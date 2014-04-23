@@ -38,17 +38,10 @@ public class UserRegistrationController {
 	TopicExchange exchangeName;
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public RegistrationResponse registerUser(@RequestBody RegistrationRequest request){
+	public void registerUser(@RequestBody RegistrationRequest newUserRegistrationRequest){
 		
-		RegisteredUser registeredUser = 
-				new RegisteredUser(null, request.getEmailAddress(), request.getPassword());
-
-		registeredUserRepository.save(registeredUser);
-		
-		 rabbitTemplate.convertAndSend(exchangeName.getName(), routingKey.getName(),
-		          new NewRegistrationNotification(registeredUser.getId(),
-		                          request.getEmailAddress(), request.getPassword()));
-		 return new RegistrationResponse(registeredUser.getId(), request.getEmailAddress());
+		rabbitTemplate.convertAndSend("user-registration", newUserRegistrationRequest);
+				 
 	}
 
 

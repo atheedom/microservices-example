@@ -5,6 +5,8 @@ public class NewRegistrationNotification {
 	private String id;
 	private String emailAddress;
 	private String password;
+	
+	public NewRegistrationNotification(){}
 
 	public NewRegistrationNotification(String id, String emailAddress,
 			String password) {
@@ -35,6 +37,14 @@ public class NewRegistrationNotification {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	
+
+	@Override
+	public String toString() {
+		return "NewRegistrationNotification [id=" + id + ", emailAddress="
+				+ emailAddress + ", password=" + password + "]";
 	}
 
 	@Override
