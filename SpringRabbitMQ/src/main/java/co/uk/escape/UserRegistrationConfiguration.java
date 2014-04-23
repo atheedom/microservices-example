@@ -1,5 +1,6 @@
 package co.uk.escape;
 
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -14,7 +15,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import co.uk.escape.domain.ReceiverNewUserRegistration;
+
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,9 +33,8 @@ public class UserRegistrationConfiguration {
 	}
 	
 	@Bean
-	@Primary
-	ObjectMapper objectMapper(){
-		return new ObjectMapper();
+	FanoutExchange exchange() {
+		return new FanoutExchange("user-registrations-exchange");
 	}
 	
 	@Bean
@@ -44,33 +45,30 @@ public class UserRegistrationConfiguration {
 		return rabbitTemplate;
 	}
 	
-	@Bean
-	TopicExchange exchange() {
-		return new TopicExchange("user-registrations-exchange");
-	}
 
-	@Bean
-	ReceiverNewUserRegistration receiver() {
-		return new ReceiverNewUserRegistration();
-	}
-	
-	@Bean
-	MessageListenerAdapter listenerAdapter(ReceiverNewUserRegistration receiver) {
-		MessageListenerAdapter messageListenerAdapter = new MessageListenerAdapter(receiver, "saveNewUser");	
-		Jackson2JsonMessageConverter jsonConverter = new Jackson2JsonMessageConverter();
-		messageListenerAdapter.setMessageConverter(jsonConverter);
-		return messageListenerAdapter;
-	}
+
+//	@Bean
+//	ReceiverNewUserRegistration receiver() {
+//		return new ReceiverNewUserRegistration();
+//	}
+//	
+//	@Bean
+//	MessageListenerAdapter listenerAdapter(ReceiverNewUserRegistration receiver) {
+//		MessageListenerAdapter messageListenerAdapter = new MessageListenerAdapter(receiver, "saveNewUser");	
+//		Jackson2JsonMessageConverter jsonConverter = new Jackson2JsonMessageConverter();
+//		messageListenerAdapter.setMessageConverter(jsonConverter);
+//		return messageListenerAdapter;
+//	}
 
 	
-	@Bean
-	SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {		
-		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-		container.setConcurrentConsumers(10);
-		container.setConnectionFactory(connectionFactory);
-		container.setQueueNames(queueName);
-		container.setMessageListener(listenerAdapter);
-		return container;
-	}
+//	@Bean
+//	SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {		
+//		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+//		container.setConcurrentConsumers(10);
+//		container.setConnectionFactory(connectionFactory);
+//		container.setQueueNames(queueName);
+//		container.setMessageListener(listenerAdapter);
+//		return container;
+//	}
 
 }

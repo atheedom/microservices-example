@@ -1,5 +1,6 @@
 package co.uk.escape.web;
 
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 
+
 import co.uk.escape.domain.RegisteredUser;
 import co.uk.escape.domain.RegisteredUserRepository;
 import co.uk.escape.domain.RegistrationRequest;
+
 import org.springframework.http.MediaType;
 
 @RestController
@@ -35,11 +38,11 @@ public class UserRegistrationController {
 	Queue routingKey;
 	
 	@Autowired
-	TopicExchange exchangeName;
+	FanoutExchange exchangeName;
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public void registerUser(@RequestBody RegistrationRequest newUserRegistrationRequest){
-		
+		System.out.println("in the controller");
 		rabbitTemplate.convertAndSend("user-registration", newUserRegistrationRequest);
 				 
 	}
