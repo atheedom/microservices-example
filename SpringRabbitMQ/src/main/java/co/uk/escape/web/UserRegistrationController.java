@@ -1,6 +1,6 @@
 package co.uk.escape.web;
 
-import org.springframework.amqp.core.FanoutExchange;
+
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -14,12 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
-
-
-import co.uk.escape.domain.RegisteredUser;
-import co.uk.escape.domain.RegisteredUserRepository;
 import co.uk.escape.domain.RegistrationRequest;
 
 import org.springframework.http.MediaType;
@@ -29,24 +23,19 @@ import org.springframework.http.MediaType;
 public class UserRegistrationController {
 
 	@Autowired
-	RegisteredUserRepository registeredUserRepository;
-
-	@Autowired
 	RabbitTemplate rabbitTemplate;
 	
 	@Autowired
 	Queue routingKey;
 	
 	@Autowired
-	FanoutExchange exchangeName;
+	TopicExchange exchangeName;
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public void registerUser(@RequestBody RegistrationRequest newUserRegistrationRequest){
 		System.out.println("in the controller");
-		rabbitTemplate.convertAndSend("user-registration", newUserRegistrationRequest);
-				 
+		rabbitTemplate.convertAndSend("user-registration", newUserRegistrationRequest);			 
 	}
-
 
 
 	@ExceptionHandler(DuplicateKeyException.class)
