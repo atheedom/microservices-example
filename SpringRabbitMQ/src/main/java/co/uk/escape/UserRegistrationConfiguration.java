@@ -2,6 +2,7 @@ package co.uk.escape;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -25,20 +26,21 @@ public class UserRegistrationConfiguration {
 	}
 	
 	@Bean
-	TopicExchange exchange() {
-		return new TopicExchange("user-registrations-exchange");
+	FanoutExchange exchange() {
+		return new FanoutExchange("user-registrations-exchange");
 	}
 	
-	@Bean
-	Binding binding(Queue queue, TopicExchange exchange) {
-		return BindingBuilder.bind(queue).to(exchange).with(queueName);
-	}
+//	@Bean
+//	Binding binding(Queue queue, TopicExchange exchange) {
+//		return BindingBuilder.bind(queue).to(exchange).with(queueName);
+//	}
 	
 	@Bean
-	RabbitTemplate template(ConnectionFactory connectionFactory){
+	RabbitTemplate template(FanoutExchange exchange, ConnectionFactory connectionFactory){
 		Jackson2JsonMessageConverter jsonConverter = new Jackson2JsonMessageConverter();
 		RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 		rabbitTemplate.setMessageConverter(jsonConverter);
+		rabbitTemplate.setExchange(exchange.getName());
 		return rabbitTemplate;
 	}
 
