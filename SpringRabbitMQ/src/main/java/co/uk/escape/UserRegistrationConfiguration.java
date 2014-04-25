@@ -1,5 +1,7 @@
 package co.uk.escape;
 
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -25,6 +27,11 @@ public class UserRegistrationConfiguration {
 	@Bean
 	TopicExchange exchange() {
 		return new TopicExchange("user-registrations-exchange");
+	}
+	
+	@Bean
+	Binding binding(Queue queue, TopicExchange exchange) {
+		return BindingBuilder.bind(queue).to(exchange).with(queueName);
 	}
 	
 	@Bean

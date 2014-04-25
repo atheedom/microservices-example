@@ -34,7 +34,7 @@ public class UserRegistrationController {
 	@RequestMapping(method = RequestMethod.POST)
 	public void registerUser(@RequestBody RegistrationRequest newUserRegistrationRequest){
 		System.out.println("in the controller");
-		rabbitTemplate.convertAndSend("user-registration", newUserRegistrationRequest);			 
+		rabbitTemplate.convertAndSend(exchangeName.getName(), routingKey.getName(), newUserRegistrationRequest);			 
 	}
 
 
