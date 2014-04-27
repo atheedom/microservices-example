@@ -1,10 +1,12 @@
 package co.uk.escape.web;
 
 
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -29,13 +31,17 @@ public class UserRegistrationController {
 //	@Autowired
 //	Queue routingKey;
 	
-	@Autowired
-	FanoutExchange exchangeName;
+//	@Autowired
+//	DirectExchange exchangeName;
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public void registerUser(@RequestBody RegistrationRequest newUserRegistrationRequest){
 		System.out.println("in the controller");
-		rabbitTemplate.convertAndSend(exchangeName.getName(), newUserRegistrationRequest);
+		
+		Object obj = rabbitTemplate.convertSendAndReceive(newUserRegistrationRequest);		
+		
+		System.out.println("obj returned: " + obj);		
+		
 	}
 
 
