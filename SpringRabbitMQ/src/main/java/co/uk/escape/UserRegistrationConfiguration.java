@@ -17,28 +17,33 @@ import co.uk.escape.web.RMQTemplate;
 @EnableAutoConfiguration
 @ComponentScan
 public class UserRegistrationConfiguration {
-	
+
 	final static String queueName = "user-registration";
-	
+
 	@Bean
 	Queue replyQueue() {
-		return new Queue(queueName+"-reply", false);
+		return new Queue(queueName + "-reply", false);
 	}
 	
-	
+	@Bean
+	Queue replyInfoQueue() {
+		return new Queue("user-info-reply", false);
+	}
+
 	@Bean
 	DirectExchange exchange() {
 		return new DirectExchange("user-registrations-exchange");
 	}
-	
+
 	@Bean
 	DirectExchange exchangeUserInfo() {
 		return new DirectExchange("user-info-exchange");
 	}
 
 	// Create new user
-	@Bean @RMQTemplate(RMQTemplate.Type.CREATE_USER)
-	RabbitTemplate template(DirectExchange exchange, Queue replyQueue, ConnectionFactory connectionFactory){
+	@Bean
+	@RMQTemplate(RMQTemplate.Type.CREATE_USER)
+	RabbitTemplate template(DirectExchange exchange, Queue replyQueue, ConnectionFactory connectionFactory) {
 		Jackson2JsonMessageConverter jsonConverter = new Jackson2JsonMessageConverter();
 		RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 		rabbitTemplate.setMessageConverter(jsonConverter);
@@ -47,34 +52,35 @@ public class UserRegistrationConfiguration {
 		rabbitTemplate.setReplyQueue(replyQueue);
 		return rabbitTemplate;
 	}
-	
-    @Bean
-    public SimpleMessageListenerContainer replyListenerContainer(RabbitTemplate template, Queue replyQueue, ConnectionFactory connectionFactory) {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.setQueues(replyQueue);
-        container.setMessageListener(template);
-        return container;
-    }
+
+	@Bean
+	public SimpleMessageListenerContainer replyListenerContainer(RabbitTemplate template, Queue replyQueue,	ConnectionFactory connectionFactory) {
+		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+		container.setConnectionFactory(connectionFactory);
+		container.setQueues(replyQueue);
+		container.setMessageListener(template);
+		return container;
+	}
 
 	// Get user info
-	@Bean @RMQTemplate(RMQTemplate.Type.GET_USER_INFO)
-	RabbitTemplate templateUserInfo(DirectExchange exchangeUserInfo, Queue replyQueue, ConnectionFactory connectionFactory){
+	@Bean
+	@RMQTemplate(RMQTemplate.Type.GET_USER_INFO)
+	RabbitTemplate templateUserInfo(DirectExchange exchangeUserInfo, Queue replyInfoQueue, ConnectionFactory connectionFactory) {
 		Jackson2JsonMessageConverter jsonConverter = new Jackson2JsonMessageConverter();
 		RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 		rabbitTemplate.setMessageConverter(jsonConverter);
 		rabbitTemplate.setExchange(exchangeUserInfo.getName());
 		rabbitTemplate.setRoutingKey("user");
-		rabbitTemplate.setReplyQueue(replyQueue);
+		rabbitTemplate.setReplyQueue(replyInfoQueue);
 		return rabbitTemplate;
 	}
-	
-    @Bean
-    public SimpleMessageListenerContainer replyUserInfoListenerContainer(RabbitTemplate templateUserInfo, Queue replyQueue, ConnectionFactory connectionFactory) {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.setQueues(replyQueue);
-        container.setMessageListener(templateUserInfo);
-        return container;
-    }
+
+	@Bean
+	public SimpleMessageListenerContainer replyUserInfoListenerContainer(RabbitTemplate templateUserInfo, Queue replyInfoQueue, ConnectionFactory connectionFactory) {
+		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+		container.setConnectionFactory(connectionFactory);
+		container.setQueues(replyInfoQueue);
+		container.setMessageListener(templateUserInfo);
+		return container;
+	}
 }
