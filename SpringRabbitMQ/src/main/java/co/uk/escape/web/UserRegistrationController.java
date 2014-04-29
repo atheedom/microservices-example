@@ -43,11 +43,11 @@ public class UserRegistrationController {
 		return registeredUser;
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/{emailAddress}")
-	public RegisteredUser getUserInfo(@PathVariable String emailAddress) {
+	@RequestMapping(method = RequestMethod.GET, value = "/{firstname}")
+	public RegisteredUser getUserInfo(@PathVariable String firstname) {
 		System.out.println("in the controller: getUserInfo()");
 
-		UserInfoRequest userInfoRequest = new UserInfoRequest(emailAddress);
+		UserInfoRequest userInfoRequest = new UserInfoRequest(firstname);
 
 		RegisteredUser registeredUser = (RegisteredUser) rabbitTemplateInfo.convertSendAndReceive(userInfoRequest);
 		
