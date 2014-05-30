@@ -29,10 +29,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.springframework.boot</groupId> -->
-<!-- 			<artifactId>spring-boot-starter-thymeleaf</artifactId> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework.boot</groupId> -->
+		<!-- <artifactId>spring-boot-starter-thymeleaf</artifactId> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -54,6 +54,14 @@
 	</properties>
 
 	<build>
+<!-- 		<extensions> -->
+
+<!-- 			<extension> -->
+<!-- 				<groupId>org.apache.maven.wagon</groupId> -->
+<!-- 				<artifactId>wagon-file</artifactId> -->
+<!-- 				<version>1.0-beta-6</version> -->
+<!-- 			</extension> -->
+<!-- 		</extensions> -->
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -61,5 +69,13 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+<!-- 	<distributionManagement> -->
+<!-- 		<repository> -->
+<!-- 			<id>vagrant_share</id> -->
+<!-- 			<url>file:/Users/atheedom/project/sites</url> -->
+<!-- 		</repository> -->
+<!-- 	</distributionManagement> -->
 
+	<packaging>war</packaging>
 </project>
