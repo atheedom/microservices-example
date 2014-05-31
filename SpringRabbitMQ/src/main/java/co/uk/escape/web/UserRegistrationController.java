@@ -24,21 +24,21 @@ import org.springframework.http.MediaType;
 @RequestMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserRegistrationController {
 
-	@Autowired @RMQTemplate(RMQTemplate.Type.CREATE_USER)
-	RabbitTemplate rabbitTemplateUser;
+//	@Autowired @RMQTemplate(RMQTemplate.Type.CREATE_USER)
+//	RabbitTemplate rabbitTemplateUser;
 	
 	@Autowired @RMQTemplate(RMQTemplate.Type.GET_USER_INFO)
 	RabbitTemplate rabbitTemplateInfo;
 	
-	@RequestMapping(method = RequestMethod.POST)
-	public RegisteredUser registerUser(@RequestBody RegistrationRequest newUserRegistrationRequest){
-		System.out.println("in the controller: registerUser()");
-		
-		RegisteredUser registeredUser = (RegisteredUser)rabbitTemplateUser.convertSendAndReceive(newUserRegistrationRequest);		
-		
-		System.out.println("obj returned from registerUser(): " + registeredUser);		
-		return registeredUser;
-	}
+//	@RequestMapping(method = RequestMethod.POST)
+//	public RegisteredUser registerUser(@RequestBody RegistrationRequest newUserRegistrationRequest){
+//		System.out.println("in the controller: registerUser()");
+//		
+//		RegisteredUser registeredUser = (RegisteredUser)rabbitTemplateUser.convertSendAndReceive(newUserRegistrationRequest);		
+//		
+//		System.out.println("obj returned from registerUser(): " + registeredUser);		
+//		return registeredUser;
+//	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{emailAddress}")
 	public RegisteredUser getUserInfo(@PathVariable String emailAddress){
