@@ -24,7 +24,7 @@ import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
-public class UserRegistrationController {
+public class UserAuthenticationController {
 
 //	@Autowired @RMQTemplate(RMQTemplate.Type.CREATE_USER)
 //	RabbitTemplate rabbitTemplateUser;
