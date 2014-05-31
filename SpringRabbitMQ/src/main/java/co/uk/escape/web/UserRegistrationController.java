@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import co.uk.escape.domain.LoginRequest;
+import co.uk.escape.domain.LoginResponse;
 import co.uk.escape.domain.RegisteredUser;
 import co.uk.escape.domain.RegistrationRequest;
 import co.uk.escape.domain.UserInfoRequest;
@@ -40,16 +42,29 @@ public class UserRegistrationController {
 //		return registeredUser;
 //	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/{emailAddress}")
-	public RegisteredUser getUserInfo(@PathVariable String emailAddress){
-		System.out.println("in the controller: getUserInfo()");
+//	@RequestMapping(method = RequestMethod.GET, value = "/{emailAddress}")
+//	public RegisteredUser getUserInfo(@PathVariable String emailAddress){
+//		System.out.println("in the controller: getUserInfo()");
+//		
+//		UserInfoRequest userInfoRequest = new UserInfoRequest(emailAddress);
+//		
+//		RegisteredUser registeredUser = (RegisteredUser)rabbitTemplateInfo.convertSendAndReceive(userInfoRequest);		
+//		
+//		System.out.println("obj returned from getUserInfo(): " + registeredUser);		
+//		return registeredUser;
+//	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public LoginResponse loginUser(@RequestBody LoginRequest loginRequest) {
+	
+		System.out.println("loginUser: enter REST: " + loginRequest);
 		
-		UserInfoRequest userInfoRequest = new UserInfoRequest(emailAddress);
+		Object obj = rabbitTemplateInfo.convertSendAndReceive(loginRequest);
+	
+		LoginResponse loginResponse = (LoginResponse)obj;
 		
-		RegisteredUser registeredUser = (RegisteredUser)rabbitTemplateInfo.convertSendAndReceive(userInfoRequest);		
-		
-		System.out.println("obj returned from getUserInfo(): " + registeredUser);		
-		return registeredUser;
+		System.out.println("loginUser: exit REST "+ loginResponse);
+		return loginResponse;
 	}
 	
 	
