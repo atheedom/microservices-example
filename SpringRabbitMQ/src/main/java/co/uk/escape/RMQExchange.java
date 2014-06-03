@@ -1,4 +1,4 @@
-package co.uk.escape.web;
+package co.uk.escape;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @Qualifier
 @Retention(RUNTIME)
 @Target({FIELD, METHOD, PARAMETER, TYPE })
-public @interface RMQTemplate {
+public @interface RMQExchange {
     Type value();
-    enum Type{ CREATE_USER, GET_USER_INFO }
+    enum Type{ AUTHORISATION, MESSAGE, RESPONSE }
 }
