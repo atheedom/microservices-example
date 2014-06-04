@@ -74,7 +74,7 @@ public class ApplicationConfiguration {
 
 	@Bean
 	Binding registrationBind(){
-		return BindingBuilder.bind(registrationResponseQueue()).to(responseExchange()).with("RegistrationRoutingKey");
+		return BindingBuilder.bind(registrationResponseQueue()).to(responseExchange()).with("ResponseRoutingKey");
 	}
 	
 	
@@ -90,8 +90,8 @@ public class ApplicationConfiguration {
 		RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 		rabbitTemplate.setMessageConverter(jsonConverter);
 		rabbitTemplate.setExchange(authorisationExchange.getName());
-		rabbitTemplate.setQueue(registrationRequestQueue.getName());
-		rabbitTemplate.setRoutingKey("RegistrationRoutingKey");
+		rabbitTemplate.setQueue(registrationRequestQueue.getName()); // TODO: determine if it matters if we have just one authorisation IN queue
+		rabbitTemplate.setRoutingKey("RegistrationRoutingKey"); // TODO: determine if it matters if the routing key is AuthorisationRoutingKey
 		rabbitTemplate.setReplyQueue(registrationResponseQueue);
 		return rabbitTemplate;
 	}

@@ -1,6 +1,6 @@
 package co.uk.escape.domain;
 
-public interface Message {
+public interface MessageBundle {
 
 		// Tag interface
 	

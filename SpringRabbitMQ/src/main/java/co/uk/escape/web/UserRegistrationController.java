@@ -1,25 +1,25 @@
 package co.uk.escape.web;
 
+import java.util.Date;
 
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.uk.escape.RMQTemplate;
-import co.uk.escape.domain.LoginRequest;
-import co.uk.escape.domain.LoginResponse;
 import co.uk.escape.domain.RegisteredUser;
 import co.uk.escape.domain.RegistrationRequest;
-import co.uk.escape.domain.UserInfoRequest;
+import co.uk.escape.domain.RegistrationRequestMessageBundle;
+
+
+import co.uk.escape.domain.RegistrationResponse;
+import co.uk.escape.domain.RegistrationResponseMessageBundle;
 
 import org.springframework.http.MediaType;
 
@@ -32,30 +32,40 @@ public class UserRegistrationController {
 	
 	// TODO: Security intercepter that extracts and prepares security data for authentication
 	@RequestMapping(method = RequestMethod.POST)
-	public RegisteredUser registerUser(@RequestBody RegistrationRequest newUserRegistrationRequest){
+	public RegistrationResponse registerUser(@RequestBody RegistrationRequest registrationRequest){
 		System.out.println("in the controller: registerUser()");
 		
-		// TODO: Message is bundled with security data and sent of to the 'authorization' queue.
-		RegisteredUser registeredUser = (RegisteredUser)rabbitTemplateUser.convertSendAndReceive(newUserRegistrationRequest);		
+		
+		MessagePostProcessor messagePostProcessor = new MessagePostProcessor() {
+	   		public Message postProcessMessage(Message message) throws AmqpException {
+	   			Date timestamp = new Date(); // TODO: Change to UTC date/time and use Joda-time (generally considered better than Java date)
+	   			message.getMessageProperties().setHeader("message-type", "registration-request");
+	   			return message;  
+	   		} 
+		};
+		
+		
+		// Transform message payload into message payload
+		RegistrationRequestMessageBundle registrationRequestMessageBundle = bundleMessage(registrationRequest);	
+			
+		// TODO: Message is bundled with security data and sent off to the 'authorization' queue.
+		
+		RegistrationResponseMessageBundle registrationResponseMessageBundle = (RegistrationResponseMessageBundle)rabbitTemplateUser.convertSendAndReceive(registrationRequestMessageBundle, messagePostProcessor);		
+		RegistrationResponse registrationResponse = registrationResponseMessageBundle.getPayload();
 		
 		// TODO: Returns an object that contains the authorization status of the request
 		// TODO: If authorization fails, return JSON giving details of error 401
 		// TODO: If access denied, return JSON giving details of error 403
 		// TODO: If authorization successful return data to client
 		
-		System.out.println("obj returned from registerUser(): " + registeredUser);		
-		return registeredUser;
+		System.out.println("obj returned from registerUser(): " + registrationResponse);		
+		return registrationResponse;
+	}
+
+	// Bundle message
+	private RegistrationRequestMessageBundle bundleMessage(RegistrationRequest registrationRequest) {
+		return new RegistrationRequestMessageBundle(registrationRequest);
 	}
 
 
-	
-	@ExceptionHandler(DuplicateKeyException.class)
-	ResponseEntity<String> duplicateKey(Exception e) {
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-	}
-	
-	@ExceptionHandler(EmptyResultDataAccessException.class)
-	ResponseEntity<String> handleNotFounds(Exception e) {
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.GONE);
-	}
 }

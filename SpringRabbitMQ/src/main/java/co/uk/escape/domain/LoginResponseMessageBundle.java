@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-public class LoginResponseMessageBundle implements Message{
+public class LoginResponseMessageBundle implements MessageBundle{
 	
 	@JsonDeserialize(as=LoginResponse.class)
 	private LoginResponse payload;

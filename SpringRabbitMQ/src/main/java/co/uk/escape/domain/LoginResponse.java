@@ -1,6 +1,6 @@
 package co.uk.escape.domain;
 
-public class LoginResponse {
+public class LoginResponse  implements MessageBase{
 	
 	private Boolean authorised;
 

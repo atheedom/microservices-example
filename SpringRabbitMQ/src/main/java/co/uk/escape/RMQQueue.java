@@ -15,5 +15,5 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @Target({FIELD, METHOD, PARAMETER, TYPE })
 public @interface RMQQueue {
     Type value();
-    enum Type{ LOGIN_REQUEST, LOGIN_RESPONSE, REGISTRATION_REQUEST, REGISTRATION_RESPONSE}
+    enum Type{ LOGIN_REQUEST, LOGIN_RESPONSE, REGISTRATION_REQUEST, REGISTRATION_RESPONSE, USER_SERVICE}
 }

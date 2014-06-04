@@ -1,15 +1,30 @@
 package co.uk.escape.domain;
 
-import java.io.Serializable;
 
-public class RegistrationRequest implements MessageBase {
+public class RegistrationResponse implements MessageBase {
 	
-	private static final long serialVersionUID = 8531149932423877023L;
-	
+	private String id;
 	private String firstname;
 	private String lastname;
 	private String password;
 	private String emailAddress;
+	
+	public RegistrationResponse(){}	
+	
+	public RegistrationResponse(RegisteredUser registeredUser){
+		this.firstname = registeredUser.getFirstname();
+		this.lastname = registeredUser.getLastname();
+		this.emailAddress = registeredUser.getEmailAddress();
+		this.password = registeredUser.getPassword();
+		this.id = registeredUser.getId();
+	}
+
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	
 	public String getFirstname() {
 		return firstname;
@@ -66,7 +81,7 @@ public class RegistrationRequest implements MessageBase {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RegistrationRequest other = (RegistrationRequest) obj;
+		RegistrationResponse other = (RegistrationResponse) obj;
 		if (emailAddress == null) {
 			if (other.emailAddress != null)
 				return false;

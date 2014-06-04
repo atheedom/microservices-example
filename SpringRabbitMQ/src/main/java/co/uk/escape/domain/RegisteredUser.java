@@ -1,6 +1,7 @@
 package co.uk.escape.domain;
 
 import java.io.Serializable;
+
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -17,9 +18,7 @@ public class RegisteredUser implements Serializable{
 	//@Indexed(unique = false)
 	private String emailAddress;
 	private String password;
-	
-	public RegisteredUser() {}
-		
+
 	public RegisteredUser(String id, String firstname, String lastname, String emailAddress, String password) {
 		this.id = id;
 		this.firstname = firstname;

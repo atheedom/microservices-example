@@ -1,6 +1,6 @@
 package co.uk.escape.domain;
 
-public class LoginRequest {
+public class LoginRequest  implements MessageBase{
 
 	private String username;
 	private String password;

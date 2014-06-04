@@ -5,26 +5,26 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-public class LoginRequestMessageBundle implements MessageBundle{
+public class RegistrationRequestMessageBundle implements MessageBundle{
 	
-	@JsonDeserialize(as=LoginRequest.class)
-	private LoginRequest payload;
+	@JsonDeserialize(as=RegistrationRequest.class)
+	private RegistrationRequest payload;
 	
 	@JsonDeserialize(as=ArrayList.class)	
 	private List<String> permissions;
 	
-	public LoginRequestMessageBundle(){}
+	public RegistrationRequestMessageBundle(){}
 		
-	public LoginRequestMessageBundle(LoginRequest payload){
+	public RegistrationRequestMessageBundle(RegistrationRequest payload){
 		this.payload = payload;
 	}
 	
-	@JsonDeserialize(as=LoginRequest.class)
-	public LoginRequest getPayload() {
+	@JsonDeserialize(as=RegistrationRequest.class)
+	public RegistrationRequest getPayload() {
 		return payload;
 	}
 
-	public void setPayload(LoginRequest payload) {
+	public void setPayload(RegistrationRequest payload) {
 		this.payload = payload;
 	}
 	
@@ -60,7 +60,7 @@ public class LoginRequestMessageBundle implements MessageBundle{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		LoginRequestMessageBundle other = (LoginRequestMessageBundle) obj;
+		RegistrationRequestMessageBundle other = (RegistrationRequestMessageBundle) obj;
 		if (payload == null) {
 			if (other.payload != null)
 				return false;
