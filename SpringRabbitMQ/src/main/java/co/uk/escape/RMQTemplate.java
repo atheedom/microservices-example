@@ -15,5 +15,5 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @Target({FIELD, METHOD, PARAMETER, TYPE })
 public @interface RMQTemplate {
     Type value();
-    enum Type{ LOGIN_USER, REGISTER_USER }
+    enum Type{ LOGIN_USER, REGISTER_USER, USER_INFO }
 }

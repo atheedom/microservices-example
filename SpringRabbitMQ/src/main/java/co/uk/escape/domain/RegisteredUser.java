@@ -1,12 +1,13 @@
 package co.uk.escape.domain;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
-@Document(collection = "users_loadtest")
+@Document(collection = "users")
 public class RegisteredUser implements Serializable{
 
 	private static final long serialVersionUID = 9072775926451261535L;
@@ -18,13 +19,31 @@ public class RegisteredUser implements Serializable{
 	//@Indexed(unique = false)
 	private String emailAddress;
 	private String password;
+	private String apikey;
+	private String secretKey;
+	
+	public RegisteredUser() {
 
+	}	
+
+	public RegisteredUser(String id, String firstname, String lastname, String emailAddress, String password, String apikey, String secretKey) {
+		this.id = id;
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.emailAddress = emailAddress;
+		this.password = password;
+		this.apikey = apikey;
+		this.secretKey = secretKey;
+	}
+	
 	public RegisteredUser(String id, String firstname, String lastname, String emailAddress, String password) {
 		this.id = id;
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.emailAddress = emailAddress;
 		this.password = password;
+		this.apikey = UUID.randomUUID().toString();
+		this.secretKey = UUID.randomUUID().toString();
 	}
 
 	public String getId() {
@@ -126,6 +145,24 @@ public class RegisteredUser implements Serializable{
 			return false;
 		return true;
 	}
+
+	public String getSecretKey() {
+		return secretKey;
+	}
+
+	public void setSecretKey(String secretKey) {
+		this.secretKey = secretKey;
+	}
+
+	public String getApikey() {
+		return apikey;
+	}
+
+	public void setApikey(String apikey) {
+		this.apikey = apikey;
+	}
+
+
 
 	
 	

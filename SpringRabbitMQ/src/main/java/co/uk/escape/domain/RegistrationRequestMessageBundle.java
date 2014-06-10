@@ -3,6 +3,8 @@ package co.uk.escape.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 public class RegistrationRequestMessageBundle implements MessageBundle{
@@ -12,6 +14,11 @@ public class RegistrationRequestMessageBundle implements MessageBundle{
 	
 	@JsonDeserialize(as=ArrayList.class)	
 	private List<String> permissions;
+	
+	@JsonDeserialize(as=HttpHeaders.class)	
+	private HttpHeaders headers;	 
+	
+	private String method;
 	
 	public RegistrationRequestMessageBundle(){}
 		
@@ -37,6 +44,24 @@ public class RegistrationRequestMessageBundle implements MessageBundle{
 		this.permissions = permissions;
 	}
 
+	@JsonDeserialize(as=HttpHeaders.class)	
+	public HttpHeaders getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(HttpHeaders headers) {
+		this.headers = headers;
+	}
+	
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	
 	@Override
 	public String toString() {
 		return "MessageBundle [payload=" + payload + ", permissions=" + permissions + "]";
@@ -73,6 +98,7 @@ public class RegistrationRequestMessageBundle implements MessageBundle{
 			return false;
 		return true;
 	}
+
 
 
 }

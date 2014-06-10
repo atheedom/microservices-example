@@ -2,14 +2,14 @@ package co.uk.escape.domain;
 
 public class LoginRequest  implements MessageBase{
 
-	private String username;
+	private String emailAddress;
 	private String password;
 	
-	public String getUsername() {
-		return username;
+	public String getEmailAddress() {
+		return emailAddress;
 	}
-	public void setUsername(String username) {
-		this.username = username;
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
 	}
 	public String getPassword() {
 		return password;
@@ -20,7 +20,7 @@ public class LoginRequest  implements MessageBase{
 	
 	@Override
 	public String toString() {
-		return "LoginRequest [username=" + username + ", password=" + password + "]";
+		return "LoginRequest [username=" + emailAddress + ", password=" + password + "]";
 	}
 	
 	@Override
@@ -30,7 +30,7 @@ public class LoginRequest  implements MessageBase{
 		result = prime * result
 				+ ((password == null) ? 0 : password.hashCode());
 		result = prime * result
-				+ ((username == null) ? 0 : username.hashCode());
+				+ ((emailAddress == null) ? 0 : emailAddress.hashCode());
 		return result;
 	}
 	
@@ -48,10 +48,10 @@ public class LoginRequest  implements MessageBase{
 				return false;
 		} else if (!password.equals(other.password))
 			return false;
-		if (username == null) {
-			if (other.username != null)
+		if (emailAddress == null) {
+			if (other.emailAddress != null)
 				return false;
-		} else if (!username.equals(other.username))
+		} else if (!emailAddress.equals(other.emailAddress))
 			return false;
 		return true;
 	}

@@ -1,7 +1,14 @@
 package co.uk.escape.web;
 
 
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
@@ -9,6 +16,7 @@ import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +28,13 @@ import co.uk.escape.domain.LoginRequestMessageBundle;
 import co.uk.escape.domain.LoginResponse;
 import co.uk.escape.domain.LoginResponseMessageBundle;
 
+
+
+import org.springframework.hateoas.LinkBuilder;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import com.rabbitmq.client.Channel;
 
@@ -34,17 +48,13 @@ public class UserAuthenticationController {
 	
 	// TODO: Security intercepter that extracts and prepares security data for authentication
 	@RequestMapping(method = RequestMethod.POST)
-	public LoginResponse loginUser(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest, @RequestHeader HttpHeaders headers ) {
 	
 		System.out.println("loginUser: enter REST: " + loginRequest);
 		
-		// TODO: Message is bundled with security data and sent of to the 'authorization' queue.
-		final String appId 	= "CIL12345"; // This could be the appliction's API key
-		final String userId = ""; 
-		
 		MessagePostProcessor messagePostProcessor = new MessagePostProcessor() {
 	   		public Message postProcessMessage(Message message) throws AmqpException {
-	   			Date timestamp = new Date(); // TODO: Change to UTC date/time and use Joda-time (generally considered better than Java date)
+//	   			Date timestamp = new Date(); // TODO: Change to UTC date/time and use Joda-time (generally considered better than Java date)
 //	   			message.getMessageProperties().setAppId(appId); // TODO: Investigate NOTE: If this is set the message is not sent and no error is thrown.
 //	   			message.getMessageProperties().setUserId(userId); // TODO: Investigate NOTE: If this is set the message is not sent and no error is thrown.
 //	   			message.getMessageProperties().setTimestamp(timestamp);  // TODO: Investigate NOTE: If this is set the message is not sent and no error is thrown.
@@ -53,10 +63,10 @@ public class UserAuthenticationController {
 	   		} 
 		};
 		
-		
+		// TODO: Message is bundled with security data and sent of to the 'authorization' queue.		
 		// Transform message payload into message payload
-		LoginRequestMessageBundle loginRequestMessageBundle = bundleMessage(loginRequest);	
-		
+		LoginRequestMessageBundle loginRequestMessageBundle = bundleMessage(loginRequest, headers);	
+
 		
 		Object obj = rabbitTemplateInfo.convertSendAndReceive(loginRequestMessageBundle, messagePostProcessor);
 	
@@ -69,12 +79,42 @@ public class UserAuthenticationController {
 		LoginResponse loginResponse = loginResponseMessageBundle.getPayload();
 		
 		System.out.println("loginUser: exit REST "+ loginResponse);
-		return loginResponse;
+
+		
+		 //HttpHeaders responseHeaders = new HttpHeaders();
+		 //responseHeaders.setLocation(linkTo(methodOn(UserRegistrationController.class)).toUri());
+		
+		
+		HttpStatus httpStatus;
+		Map<String, String> res = new HashMap<String, String>();
+		if (loginResponse.getAuthorised()) {
+			httpStatus = HttpStatus.OK;
+			res.put("status", httpStatus.toString());
+		} else {			
+			httpStatus = HttpStatus.UNAUTHORIZED;
+			res.put("status", httpStatus.toString());
+			res.put("message", httpStatus.getReasonPhrase());
+			res.put("developersmessage", "User did not provide the correct credentials to login.");
+			res.put("moreinfo", "http://localhost/moreinfo?code="+httpStatus.toString());	
+		}
+		
+	
+		loginResponse.setResponse(res);
+				
+		loginResponse.add(linkTo(UserAuthenticationController.class).withSelfRel());
+		loginResponse.add(linkTo(UserRegistrationController.class).withRel("register"));
+		loginResponse.add(linkTo(UserInfoController.class).withRel("userinfo"));
+		
+		
+		ResponseEntity<LoginResponse> response = new ResponseEntity<LoginResponse>(loginResponse, httpStatus);
+		
+
+		return response;
 	}
 
 	// Bundle message
-	private LoginRequestMessageBundle bundleMessage(LoginRequest object) {
-		return new LoginRequestMessageBundle(object);
+	private LoginRequestMessageBundle bundleMessage(LoginRequest object, HttpHeaders headers) {
+		return new LoginRequestMessageBundle(object, headers);
 	}
 	
 	

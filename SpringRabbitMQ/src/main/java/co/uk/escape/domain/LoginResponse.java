@@ -1,9 +1,17 @@
 package co.uk.escape.domain;
 
-public class LoginResponse  implements MessageBase{
+import java.util.ArrayList;
+import java.util.Map;
+
+import org.springframework.hateoas.ResourceSupport;
+
+public class LoginResponse extends ResourceSupport implements MessageBase {
 	
 	private Boolean authorised;
-
+	private String APIKey;
+	private String secretKey;
+	private Map<String, String> response;
+	
 	public Boolean getAuthorised() {
 		return authorised;
 	}
@@ -41,6 +49,30 @@ public class LoginResponse  implements MessageBase{
 	@Override
 	public String toString() {
 		return "LoginResponse [authorised=" + authorised + "]";
+	}
+
+	public String getAPIKey() {
+		return APIKey;
+	}
+
+	public void setAPIKey(String aPIKey) {
+		APIKey = aPIKey;
+	}
+
+	public String getSecretKey() {
+		return secretKey;
+	}
+
+	public void setSecretKey(String secretKey) {
+		this.secretKey = secretKey;
+	}
+
+	public Map<String, String> getResponse() {
+		return response;
+	}
+
+	public void setResponse(Map<String, String> response) {
+		this.response = response;
 	}
 	
 

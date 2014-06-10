@@ -8,6 +8,7 @@ import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ import co.uk.escape.domain.RegistrationRequestMessageBundle;
 import co.uk.escape.domain.RegistrationResponse;
 import co.uk.escape.domain.RegistrationResponseMessageBundle;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 @RestController
@@ -32,13 +34,11 @@ public class UserRegistrationController {
 	
 	// TODO: Security intercepter that extracts and prepares security data for authentication
 	@RequestMapping(method = RequestMethod.POST)
-	public RegistrationResponse registerUser(@RequestBody RegistrationRequest registrationRequest){
+	public RegistrationResponse registerUser(@RequestBody RegistrationRequest registrationRequest, @RequestHeader HttpHeaders headers){
 		System.out.println("in the controller: registerUser()");
-		
-		
+			
 		MessagePostProcessor messagePostProcessor = new MessagePostProcessor() {
 	   		public Message postProcessMessage(Message message) throws AmqpException {
-	   			Date timestamp = new Date(); // TODO: Change to UTC date/time and use Joda-time (generally considered better than Java date)
 	   			message.getMessageProperties().setHeader("message-type", "registration-request");
 	   			return message;  
 	   		} 
@@ -46,7 +46,7 @@ public class UserRegistrationController {
 		
 		
 		// Transform message payload into message payload
-		RegistrationRequestMessageBundle registrationRequestMessageBundle = bundleMessage(registrationRequest);	
+		RegistrationRequestMessageBundle registrationRequestMessageBundle = bundleMessage(registrationRequest, headers, "POST");	
 			
 		// TODO: Message is bundled with security data and sent off to the 'authorization' queue.
 		
@@ -63,8 +63,11 @@ public class UserRegistrationController {
 	}
 
 	// Bundle message
-	private RegistrationRequestMessageBundle bundleMessage(RegistrationRequest registrationRequest) {
-		return new RegistrationRequestMessageBundle(registrationRequest);
+	private RegistrationRequestMessageBundle bundleMessage(RegistrationRequest registrationRequest, HttpHeaders headers, String method) {
+		RegistrationRequestMessageBundle registrationRequestMessageBundle =  new RegistrationRequestMessageBundle(registrationRequest);
+		registrationRequestMessageBundle.setHeaders(headers);
+		registrationRequestMessageBundle.setMethod(method);
+		return registrationRequestMessageBundle;
 	}
 
 
